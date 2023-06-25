@@ -7,9 +7,10 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -43,9 +44,9 @@ public class BikeDb {
 		}
 	}
 
-	private void insertIntoSql(RentBikeStatus bikeObject) {
+	public void insertIntoSql(RentBikeStatus bikeObject) {
 
-		int rackTotCnt = bikeObject.getRackToCnt();
+		int rackTotCnt = bikeObject.getRackTotCnt();
 		String stationName = bikeObject.getStationName();
 		int parkingBikeTotCnt = bikeObject.getParkingBikeTotCnt();
 		int shared = bikeObject.getShared();
@@ -54,7 +55,7 @@ public class BikeDb {
 		String stationId = bikeObject.getStationId();
 
 		String sql = "INSERT INTO rentbikestatus \r\n"
-				+ "	(rackToCnt, stationName, parkingBikeTotCnt, shared, stationLatitude, stationLongitude, stationId)\r\n"
+				+ "	(rackTotCnt, stationName, parkingBikeTotCnt, shared, stationLatitude, stationLongitude, stationId)\r\n"
 				+ "	VALUES(?, ?, ?, ?, ?, ?, ?);";
 
 		PreparedStatement pstmt;
@@ -80,8 +81,86 @@ public class BikeDb {
 			System.out.println("데이터 삽입 실패");
 			e.printStackTrace();
 		}
-
 	}
+	
+	public List<RentBikeStatus> readToSql() {
+		String sql = "SELECT * FROM mydb.rentbikestatus";
+		List<RentBikeStatus> list = new ArrayList<>();
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while(rs.next()) {
+				int rackTotCnt = rs.getInt("rackTotCnt");
+				String stationName = rs.getString("stationName");
+				int parkingBikeTotCnt = rs.getInt("parkingBikeTotCnt");
+				int shared = rs.getInt("shared");
+				double stationLatitude = rs.getDouble("stationLatitude");
+				double stationLongitude = rs.getDouble("stationLongitude");
+				String stationId = rs.getString("stationId");
+				
+				RentBikeStatus rentBikeStatus = new RentBikeStatus(rackTotCnt, stationName, parkingBikeTotCnt, shared, stationLatitude, stationLongitude, stationId);
+				list.add(rentBikeStatus);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public void updateToSql(RentBikeStatus bikeObject) {
+		int rackTotCnt = bikeObject.getRackTotCnt();
+		String stationName = bikeObject.getStationName();
+		int parkingBikeTotCnt = bikeObject.getParkingBikeTotCnt();
+		int shared = bikeObject.getShared();
+		double stationLatitude = bikeObject.getStationLatitude();
+		double stationLongitude = bikeObject.getStationLongitude();
+		String stationId = bikeObject.getStationId();
+		
+		String sql = "UPDATE rentbikestatus SET rackTotCnt = ?, stationName = ?, parkingBikeToCnt = ?, shared = ?, stationLatitude = ?, stationLongitude = ?, stationId =?"
+		+ "WHERE staionId = " + stationId;
+		PreparedStatement pstmt;
+		
+		try {
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, rackTotCnt);
+			pstmt.setString(2, stationName);
+			pstmt.setInt(3, parkingBikeTotCnt);
+			pstmt.setInt(4, shared);
+			pstmt.setDouble(5, stationLatitude);
+			pstmt.setDouble(6, stationLongitude);
+			pstmt.setString(7, stationId);
+			int result = pstmt.executeUpdate();
+			if(result > 0) {
+				System.out.println("수정 성공");
+			}else {
+				System.out.println("수정 실패");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}	
+	
+	public void deleteFromSql(String stationId) {
+		String stationNumber = stationId.trim();
+		
+		String sql = "DELETE FROM book WHERE bookid = ?";
+		PreparedStatement pstmt;
+		try {
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, stationNumber);
+			
+			int result = pstmt.executeUpdate();
+			if(result > 0) {
+				System.out.println("삭제 성공");
+			}else {
+				System.out.println("삭제 실패");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 	public static void main(String[] args) {
 
@@ -109,9 +188,9 @@ public class BikeDb {
 				// and java.lang.Number are in module java.base of loader 'bootstrap')
 				// at system.BikeDb.main(BikeDb.java:98)
 
-				String ractToCnt = (String) rowJson.get("rackTotCnt");
-				int ractToCntInt = Integer.parseInt(ractToCnt);
-				rentBikeStatus.setRackToCnt(ractToCntInt);
+				String rackTotCnt = (String) rowJson.get("rackTotCnt");
+				int rackToCntInt = Integer.parseInt(rackTotCnt);
+				rentBikeStatus.setRackToCnt(rackToCntInt);
 
 				rentBikeStatus.setStationName(((String) rowJson.get("stationName")));
 

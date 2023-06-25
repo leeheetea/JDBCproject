@@ -13,7 +13,19 @@ public class RentBikeStatus {
 	public RentBikeStatus() {
 	}
 	
-	public int getRackToCnt() {
+	public RentBikeStatus(int rackTotCnt, String stationName, int parkingBikeTotCnt, int shared, double stationLatitude,
+			double stationLongitude, String stationId) {
+		super();
+		this.rackTotCnt = rackTotCnt;
+		this.stationName = stationName;
+		this.parkingBikeTotCnt = parkingBikeTotCnt;
+		this.shared = shared;
+		this.stationLatitude = stationLatitude;
+		this.stationLongitude = stationLongitude;
+		this.stationId = stationId;
+	}
+
+	public int getRackTotCnt() {
 		return rackTotCnt;
 	}
 	public void setRackToCnt(int racToCnt) {
@@ -58,8 +70,7 @@ public class RentBikeStatus {
 
 	@Override
 	public String toString() {
-		return "[거치대 개수=" + rackTotCnt + ", 대여소 이름=" + stationName + ", 주차된 자전거 수="
-				+ parkingBikeTotCnt + ",거치율=" + shared + ", 위도=" + stationLatitude
-				+ ", 경도=" + stationLongitude + ", 대여소ID=" + stationId + "]";
+		return "[" + stationName + ", 주차된 자전거 수="
+				+ parkingBikeTotCnt + ", 대여소 ID=" + stationId + "]";
 	}
 }
