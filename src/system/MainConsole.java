@@ -23,9 +23,9 @@ public class MainConsole {
 		int EndPageNum = bd.EndPageCount();
 
 		// 메뉴 출력
-		System.out.println("+--------------------------------------------+");
-		System.out.println("| 1. 이전페이지 | 2. 다음페이지 | 3. 검색 | 4. 종료 |");
-		System.out.println("+--------------------------------------------+");
+		System.out.println("+--------------------------------------------------------------+");
+		System.out.println("| 0. 페이지 이동 | 1. 이전페이지 | 2. 다음페이지 | 3. 이름 검색 | 4. 종료 |");
+		System.out.println("+--------------------------------------------------------------+");
 		System.out.println("|" + pageNum + " / " + EndPageNum + "|");
 		int input = Integer.parseInt(sc.nextLine());
 		return input;
@@ -34,12 +34,24 @@ public class MainConsole {
 	public int adminMenu(Scanner sc) {
 		int EndPageNum = bd.EndPageCount();
 
-		System.out.println("---------------------------------------------------------------");
-		System.out.println("| 1. 이전페이지 | 2. 다음페이지 | 3. 검색 | 4. 종료 | 5. 등록 | 6. 삭제 |");
-		System.out.println("---------------------------------------------------------------");
+		System.out.println("------------------------------------------------------------------------------------------------+");
+		System.out.println("| 0. 페이지 이동 | 1. 이전페이지 | 2. 다음페이지 | 3. 이름 검색 | 4. 거치율 조회 | 5. 등록 | 6. 삭제 | 7. 종료 |");
+		System.out.println("------------------------------------------------------------------------------------------------+");
 		System.out.println("|" + pageNum + " / " + EndPageNum + "|");
 		int input = Integer.parseInt(sc.nextLine());
 		return input;
+	}
+	
+	public void pageMove(Scanner sc) {
+		System.out.println("이동 할 페이지의 번호 >");
+		int input = Integer.parseInt(sc.nextLine());
+		if(input > 0 && input <= bd.EndPageCount() ) {
+			System.out.println(input + "번 페이지로 이동합니다");
+			pageNum = input;
+		}else {
+			System.out.println("잘못된 입력입니다.");
+		}
+		
 	}
 
 	public void printRegistration(Scanner sc) {
@@ -72,8 +84,9 @@ public class MainConsole {
 		if (pageNum == 1) {
 			System.out.println("첫 페이지 입니다.");
 			return;
+		}else {
+			pageNum--;
 		}
-		pageNum--;
 	}
 
 	public void printNext() {
@@ -81,8 +94,9 @@ public class MainConsole {
 		if (pageNum >= EndPageNum) {
 			System.out.println("마지막 페이지 입니다.");
 			EndPageNum--;
+		}else {
+			pageNum++;
 		}
-		pageNum++;
 	}
 
 	public void printBikeList() {
@@ -100,6 +114,44 @@ public class MainConsole {
 		list.stream().forEach(System.out::println);
 		System.out.println("---------------------------------------------------------------");
 	}
+	
+	public void printShared(Scanner sc) {
+		System.out.println("[ 1. 거치율이 0%인 정거장 | 2. 거치율이 150%이상인 정거장");
+		int input = Integer.parseInt(sc.nextLine());
+		List<RentBikeStatus> list;
+		switch (input){
+		case 1:
+			list = bd.SearchSharedZero();
+			System.out.println("---------------------------------------------------------------");
+			System.out.println("정거장명 \t\t\t | 자전거 수 |  거치대 수 |  거치율 |\t  정거장ID |");
+			System.out.println("---------------------------------------------------------------");
+			list.stream()
+			.forEach(i -> System.out.println(
+					"[ "+ i.getStationName() +"\t\t"
+					+ "|" + i.getParkingBikeTotCnt() +"\t"
+					+ "|" + i.getRackTotCnt() +"\t"
+					+ "|" + i.getShared() +"\t\t"
+					+ "|" + i.getStationId() +"\t"
+					+ " ]"
+					));
+			break;
+		case 2:
+			list = bd.SearchSharedOver();
+			System.out.println("---------------------------------------------------------------");
+			System.out.println("정거장명 \t\t\t | 자전거 수 |  거치대 수 |  거치율 |\t  정거장ID |");
+			System.out.println("---------------------------------------------------------------");
+			list.stream()
+			.forEach(i -> System.out.println(
+					"[ "+ i.getStationName() +"\t\t"
+					+ "|" + i.getParkingBikeTotCnt() +"\t"
+					+ "|" + i.getRackTotCnt() +"\t"
+					+ "|" + i.getShared() +"\t\t"
+					+ "|" + i.getStationId() +"\t"
+					+ " ]"
+					));			
+			break;
+		}
+	}
 
 	public static void main(String[] args) {
 		MainConsole mc = new MainConsole();
@@ -112,6 +164,9 @@ public class MainConsole {
 			mc.printBikeList();
 			selectNum = mc.printMenu(sc);
 			switch (selectNum) {
+			case 0:
+				mc.pageMove(sc);
+				break;
 			case 1:
 				mc.printPrevious();
 				break;
@@ -132,6 +187,9 @@ public class MainConsole {
 					mc.printBikeList();
 					adminSelectNum = mc.adminMenu(sc);
 					switch (adminSelectNum) {
+					case 0:
+						mc.pageMove(sc);
+						break;
 					case 1:
 						mc.printPrevious();
 						break;
@@ -142,16 +200,19 @@ public class MainConsole {
 						mc.printSearchList(sc);
 						break;
 					case 4:
-						System.out.println("-------------------------------------------");
-						System.out.println("프로그램을 종료합니다.");
-						System.out.println("-------------------------------------------");
-						break EXIT;
+						mc.printShared(sc);
+						break;
 					case 5:
 						mc.printRegistration(sc);
 						break;
 					case 6:
 						mc.printDelete(sc);
 						break;
+					case 7:
+						System.out.println("-------------------------------------------");
+						System.out.println("프로그램을 종료합니다.");
+						System.out.println("-------------------------------------------");
+						break EXIT;
 					default:
 						System.out.println("잘못된 입력입니다.");
 						break;

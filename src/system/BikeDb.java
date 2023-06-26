@@ -206,6 +206,62 @@ public class BikeDb {
 		return list;
 	}
 
+	public List<RentBikeStatus> SearchSharedZero() {
+		List<RentBikeStatus> list = new ArrayList<>();
+		String sql = "SELECT * FROM mydb.rentbikestatus\r\n" + "WHERE parkingBikeTotCnt = 0;";
+
+		try {
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery(sql);
+			while (rs.next()) {
+				int rackTotCnt = rs.getInt("rackTotCnt");
+				String stationName = rs.getString("stationName").replaceAll("[0-9.]", "").trim();
+				if(stationName.length() > 10) {
+					stationName = stationName.substring(0, 10);
+				}
+				int parkingBikeTotCnt = rs.getInt("parkingBikeTotCnt");
+				int shared = rs.getInt("shared");
+				double stationLatitude = rs.getDouble("stationLatitude");
+				double stationLongitude = rs.getDouble("stationLongitude");
+				String stationId = rs.getString("stationId");
+				RentBikeStatus rentBikeStatus = new RentBikeStatus(rackTotCnt, stationName, parkingBikeTotCnt, shared,
+						stationLatitude, stationLongitude, stationId);
+				list.add(rentBikeStatus);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public List<RentBikeStatus> SearchSharedOver() {
+		List<RentBikeStatus> list = new ArrayList<>();
+		String sql = "SELECT * FROM mydb.rentbikestatus\r\n" + "WHERE shared > 150;";
+
+		try {
+			Statement st = con.createStatement();
+			ResultSet rs = st.executeQuery(sql);
+			while (rs.next()) {
+				int rackTotCnt = rs.getInt("rackTotCnt");
+				String stationName = rs.getString("stationName").replaceAll("[0-9.]", "").trim();
+				if(stationName.length() > 10) {
+					stationName = stationName.substring(0, 10);
+				}
+				int parkingBikeTotCnt = rs.getInt("parkingBikeTotCnt");
+				int shared = rs.getInt("shared");
+				double stationLatitude = rs.getDouble("stationLatitude");
+				double stationLongitude = rs.getDouble("stationLongitude");
+				String stationId = rs.getString("stationId");
+				RentBikeStatus rentBikeStatus = new RentBikeStatus(rackTotCnt, stationName, parkingBikeTotCnt, shared,
+						stationLatitude, stationLongitude, stationId);
+				list.add(rentBikeStatus);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
 	public void updateToSql(RentBikeStatus bikeObject) {
 		int rackTotCnt = bikeObject.getRackTotCnt();
 		String stationName = bikeObject.getStationName();
