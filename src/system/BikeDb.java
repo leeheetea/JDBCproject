@@ -83,12 +83,19 @@ public class BikeDb {
 		}
 	}
 	
-	public List<RentBikeStatus> readToSql() {
-		String sql = "SELECT * FROM mydb.rentbikestatus";
+	public List<RentBikeStatus> readToSql(int pageNum) {
+		String sql = "SELECT * FROM mydb.rentbikestatus WHERE rownum BETWEEN ? AND ?";
 		List<RentBikeStatus> list = new ArrayList<>();
+		int startRownum = 1 + (pageNum-1) * 10;
+		int endRownum = pageNum * 10;
+		
 		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			PreparedStatement pstm = con.prepareStatement(sql);
+			pstm.setInt(1, startRownum);
+			pstm.setInt(2, endRownum);
+			
+			ResultSet rs = pstm.executeQuery();
+			
 			while(rs.next()) {
 				int rackTotCnt = rs.getInt("rackTotCnt");
 				String stationName = rs.getString("stationName");
@@ -161,13 +168,30 @@ public class BikeDb {
 		}
 	}
 	
+	public int getCount() {
+		int dataCount = 0;
+		String sql = "SELECT COUNT(rownum) FROM rentbikestatus";
+		
+		Statement st;
+		try {
+			st = con.createStatement();
+			ResultSet rs = st.executeQuery(sql);
+			rs.next();
+			dataCount = rs.getInt("COUNT(rownum)");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return dataCount;
+	}
+	
 
 	public static void main(String[] args) {
 
 		String key = "786a6b78486b616e39316376734d53";
 		String result = "";
 		List<RentBikeStatus> bikeStatusList = new ArrayList<>();
-
+		
 		try {
 			URL url = new URL("http://openapi.seoul.go.kr:8088/" + key + "/json/bikeList/1001/2000");
 
