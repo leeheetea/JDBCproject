@@ -70,7 +70,7 @@ public class RentBikeStatus {
 
 	@Override
 	public String toString() {
-		return "[" + stationName + ", 주차된 자전거 수="
-				+ parkingBikeTotCnt + ", 대여소 ID=" + stationId + "]";
+		return "[ " + stationName + " | 주차된 자전거 수="
+				+ parkingBikeTotCnt + " | 대여소 ID=" + stationId + " ]";
 	}
 }
