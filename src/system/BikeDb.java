@@ -347,13 +347,12 @@ public class BikeDb {
 		}
 		return EndPageNum;
 	}
-
-	public static void main(String[] args) {
-
+	
+	public void DbInstall() {
 		String key = "786a6b78486b616e39316376734d53";
 		String result = "";
 		List<RentBikeStatus> bikeStatusList = new ArrayList<>();
-
+	
 		try {
 			URL url = new URL("http://openapi.seoul.go.kr:8088/" + key + "/json/bikeList/1001/2000");
 

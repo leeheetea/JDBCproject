@@ -116,7 +116,7 @@ public class MainConsole {
 	}
 	
 	public void printShared(Scanner sc) {
-		System.out.println("[ 1. 거치율이 0%인 정거장 | 2. 거치율이 150%이상인 정거장");
+		System.out.println("[ 1. 거치율이 0%인 정거장 | 2. 거치율이 150%이상인 정거장 ]");
 		int input = Integer.parseInt(sc.nextLine());
 		List<RentBikeStatus> list;
 		switch (input){
